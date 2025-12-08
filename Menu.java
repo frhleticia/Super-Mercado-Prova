@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
@@ -23,16 +22,18 @@ public class Menu {
     }
 
     public void switchCase() {
-        System.out.println("Digite 1 para gerenciar pedidos, 2 para gerenciar o estoque, ou 0 para sair. ");
+        System.out.println("Digite 1 para gerenciar pedidos.\n" +
+                           "Digite 2 para gerenciar o estoque.\n" +
+                           "Digite 0 para sair.");
         opcaoMenuPrincipal = scannerParaNumero.nextInt();
         if (opcaoMenuPrincipal == 1) {
             int opcaoPedidos;
             do {
                 System.out.println("Digite 1 para adicionar item ao carrinho.\n" +
-                        "Digite 2 para ver o carrinho completo.\n" +
-                        "Digite 3 para realizar o pagamento.\n" +
-                        "Digite 4 para retirar todos os itens do carrinho.\n" +
-                        "Digite -1 para voltar ao menu anterior.");
+                                   "Digite 2 para ver o carrinho completo.\n" +
+                                   "Digite 3 para realizar o pagamento.\n" +
+                                   "Digite 4 para retirar todos os itens do carrinho.\n" +
+                                   "Digite -1 para voltar ao menu anterior.");
                 opcaoPedidos = scannerParaNumero.nextInt();
                 switch (opcaoPedidos) {
                     case 1:
@@ -43,21 +44,18 @@ public class Menu {
                         pedido.imprimeValorTotal();
                         break;
                     case 3:
-                        ArrayList<Item> carrinhoDoCliente = pedido.getListaDeItems();
-                        if (carrinhoDoCliente.isEmpty()){
-                            System.out.println("Não foi possível realizar o pagamento.");
-                        } else {
                             System.out.println("Digite o valor a ser entregue: ");
                             double recebeValorDoCliente = scannerParaNumero.nextDouble();
-                            double troco = pedido.realizarPagamento(recebeValorDoCliente);
-                            if (troco > 0) {
-                                System.out.println("Pagamento realizado com sucesso! Troco: " + troco);
-                            } else {
-                                System.out.println("Pagamento realizado com sucesso! Não restou troco.");
+                            if (pedido.verificarSePodeRealizarPagamento(recebeValorDoCliente)){
+                                double troco = pedido.realizarTransacao(recebeValorDoCliente);
+                                if (troco > 0) {
+                                    System.out.println("Pagamento realizado com sucesso! Troco: " + troco);
+                                    pedido.calcularMenorQuantidadeDeNotas(troco);
+                                } else {
+                                    System.out.println("Pagamento realizado com sucesso! Não restou troco.");
+                                }
+                                pedido.limparCarrinho();
                             }
-                            pedido.limparCarrinho();
-                            pedido.calcularMenorQuantidadeDeNotas(troco);
-                        }
                         break;
                     case 4:
                         pedido.limparCarrinho();
@@ -68,8 +66,8 @@ public class Menu {
         } else if (opcaoMenuPrincipal  == 2) {
             do {
                 System.out.println("Digite 1 para cadastrar um produto novo.\n" +
-                        "Digite 2 para ver o catálogo completo do estoque.\n" +
-                        "Digite -1 para voltar ao menu anterior.");
+                                   "Digite 2 para ver o catálogo completo do estoque.\n" +
+                                   "Digite -1 para voltar ao menu anterior.");
                 opcaoEstoque = scannerParaNumero.nextInt();
                 switch (opcaoEstoque) {
                     case 1:
