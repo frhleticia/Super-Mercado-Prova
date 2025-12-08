@@ -32,7 +32,8 @@ public class Estoque {
 
     public void imprimeCatalogoDoEstoque() {
         for (Produto produto : listaDeProdutos) {
-            System.out.println("➥ "+ produto.getNome()+
+            System.out.println("➥ Produto n°"+ getPosicaoDoProdutoNaLista(produto)+
+                    "\n"+ produto.getNome()+
                     "\nId: "+ produto.getId()+
                     "\nPreço: "+ produto.getPreco()+
                     "\nQuantidade em estoque: "+ produto.getQuantidadeEmEstoque());
@@ -40,13 +41,13 @@ public class Estoque {
     }
 
     public boolean darBaixaEmEstoquePorNome(String nome, int quantidadeParaDarBaixa) {
-        var produto = encontraProdutoPorNome(nome); {
-                if (temEstoqueOuNao(produto, quantidadeParaDarBaixa)) {
-                    produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - quantidadeParaDarBaixa);
-                    return true;
-                }
+        var produto = encontraProdutoPorNome(nome);
+        if (temEstoqueOuNao(produto, quantidadeParaDarBaixa)) {
+            produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - quantidadeParaDarBaixa);
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     public boolean darBaixaEmEstoquePorId(int id, int quantidadeParaDarBaixa) {
@@ -68,14 +69,11 @@ public class Estoque {
     }
 
     public int getPosicaoDoProdutoNaLista(Produto produto) {
-        return listaDeProdutos.indexOf(produto);
+        return listaDeProdutos.indexOf(produto)+1;
     }
 
     public boolean temEstoqueOuNao(Produto produto, int quantidadeParaDarBaixa) {
         var qtdAtualEmEstoque = getQuantidadeAtualEmEstoque(produto);
-        if (qtdAtualEmEstoque >= quantidadeParaDarBaixa){
-            return true;
-        }
-        return false;
+        return qtdAtualEmEstoque >= quantidadeParaDarBaixa;
     }
 }
