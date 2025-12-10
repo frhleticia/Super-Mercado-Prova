@@ -6,6 +6,7 @@ public class Estoque {
     private final ArrayList<Produto> listaDeProdutos = new ArrayList<>();
 
     public void inicializaEstoque() {
+        new Estoque();
     }
 
     public Produto encontraProdutoPorNome(String nome) {
@@ -27,16 +28,25 @@ public class Estoque {
     }
 
     public boolean cadastraProduto(Produto produto) {
+        for (Produto verificaId : listaDeProdutos){
+            if (verificaId.getId() == produto.getId()){
+                return false;
+            }
+        }
         return listaDeProdutos.add(produto);
     }
 
     public void imprimeCatalogoDoEstoque() {
-        for (Produto produto : listaDeProdutos) {
-            System.out.println("➥ Produto n°"+ getPosicaoDoProdutoNaLista(produto)+
-                    "\n"+ produto.getNome()+
-                    "\nId: "+ produto.getId()+
-                    "\nPreço: "+ produto.getPreco()+
-                    "\nQuantidade em estoque: "+ produto.getQuantidadeEmEstoque());
+        if (listaDeProdutos.isEmpty()){
+            System.out.println("Estoque vazio.");
+        } else {
+            for (Produto produto : listaDeProdutos) {
+                System.out.println("➥ Produto n°" + getPosicaoDoProdutoNaLista(produto) +
+                        "\n" + produto.getNome() +
+                        "\nId: " + produto.getId() +
+                        "\nPreço: " + produto.getPreco() +
+                        "\nQuantidade em estoque: " + produto.getQuantidadeEmEstoque());
+            }
         }
     }
 
