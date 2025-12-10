@@ -1,6 +1,6 @@
 public class Produto {
     private int id;
-    private String nome;
+    private final String nome;
     private double preco;
     private int quantidadeEmEstoque;
 
@@ -22,11 +22,7 @@ public class Produto {
     public String getNome() {
         return nome;
     }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
+    
     public double getPreco() {
         return preco;
     }
