@@ -3,25 +3,21 @@ import java.util.Scanner;
 
 public class Pedido {
     Scanner scanner = new Scanner(System.in);
-    private ArrayList<Item> listaDeItems = new ArrayList<>();
+    private final ArrayList<Item> listaDeItems = new ArrayList<>();
     private double valorTotalDoPedido = 0;
     private Estoque estoque;
 
     public void calculaValorTotal(){
         valorTotalDoPedido = 0;
         for (Item item : listaDeItems) {
-            var produto = item.getProduto();
-            valorTotalDoPedido += produto.getPreco() * item.getQuantidade();
+            item.defineValorTotal();
+            valorTotalDoPedido += item.getValorDoItem();
         }
         this.setValorTotalDoPedido(valorTotalDoPedido);
     }
 
-    public boolean verificarSePodeRealizarPagamento(double recebeValorDoCliente){
-        if (listaDeItems.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
+    public boolean verificarSePodeRealizarPagamento(){
+        return !listaDeItems.isEmpty();
     }
 
     public double realizarTransacao(double recebeValorDoCliente) {
@@ -35,27 +31,18 @@ public class Pedido {
 
     public void calcularMenorQuantidadeDeNotas(double troco) {
         int trocoInt = (int) Math.floor(troco);
-        double moedas = troco - trocoInt;
-        double restoEmMoedas = troco - trocoInt;
         int[] notasEmReais = {50, 20, 10, 5, 2};
         for (int nota : notasEmReais){
             int totalMenorQtdDeNotas = trocoInt / nota;
             trocoInt = trocoInt % nota;
             System.out.print(totalMenorQtdDeNotas+" nota(s) de "+nota+", ");
         }
-        System.out.println("respondendo a letra c) Desenvolver um método onde recebe o valor do troco e \n" +
-                "calcule a menor quantidade de notas.\n");
+        System.out.println("respondendo a letra c) Desenvolver um método onde recebe o valor do troco e \ncalcule a menor quantidade de notas.\n");
     }
 
     public boolean adicionaItemNaLista (Produto produto, int quantidade) {
-        if (estoque.temEstoqueOuNao(produto, quantidade)) {
-            Item item = new Item(produto, quantidade);
-            listaDeItems.add(item);
-            estoque.darBaixaEmEstoquePorNome(produto.getNome(), quantidade);
-            return true;
-        } else {
-            return false;
-        }
+        Item item = new Item(produto, quantidade);
+        return listaDeItems.add(item);
     }
 
     public void imprimePedido(){
@@ -73,20 +60,24 @@ public class Pedido {
 
     public void imprimeValorTotal() {
         calculaValorTotal();
-        System.out.printf("Valor total: %.2f\n", valorTotalDoPedido);
+        System.out.printf("Valor total: %.2f\n", getValorTotalDoPedido());
     }
 
-    public void adicionaItem(){
-        var nomeProdutoParaProcuar = recebeNomeDoTeclado();
+    public void adicionaItem(Produto produtoEncontrado){
+        if (produtoEncontrado == null) {
+            System.out.println("Produto não encontrado.");
+            return; //faz o código parar aqui
+        }
+
+        System.out.println("Digite a quantidade: ");
         var qtdDeProdutoParaAdicionar = recebeQuantidadeDoTeclado();
-        var produtoEncontrado = estoque.encontraProdutoPorNome(nomeProdutoParaProcuar);
-            if (produtoEncontrado != null){
-            adicionaItemNaLista(produtoEncontrado, qtdDeProdutoParaAdicionar);
-                if (!adicionaItemNaLista(produtoEncontrado, qtdDeProdutoParaAdicionar)) {
-                    System.out.println("Não foi possível adicionar. Produto fora de estoque.");
-                }
-            } else {
-                System.out.println("Produto não encontrado.");
+
+        if (estoque.temEstoqueOuNao(produtoEncontrado, qtdDeProdutoParaAdicionar)) {
+            if (adicionaItemNaLista(produtoEncontrado, qtdDeProdutoParaAdicionar)) {
+                estoque.darBaixaEmEstoquePorNome(produtoEncontrado.getNome(), qtdDeProdutoParaAdicionar);
+            }
+        } else {
+            System.out.println("Não foi possível adicionar. Produto fora de estoque.");
             }
     }
 
@@ -96,7 +87,6 @@ public class Pedido {
     }
 
     public int recebeQuantidadeDoTeclado(){
-        System.out.println("Digite a quantidade de produto: ");
         return scanner.nextInt();
     }
 
@@ -108,16 +98,16 @@ public class Pedido {
         return listaDeItems;
     }
 
-    public void setListaDeItems(ArrayList<Item> listaDeItems) {
-        this.listaDeItems = listaDeItems;
-    }
-
     public double getValorTotalDoPedido() {
         return valorTotalDoPedido;
     }
 
     public void setValorTotalDoPedido(double valorTotalDoPedido) {
         this.valorTotalDoPedido = valorTotalDoPedido;
+    }
+
+    public Estoque getEstoque() {
+        return estoque;
     }
 
     public void setEstoque(Estoque estoque) {
