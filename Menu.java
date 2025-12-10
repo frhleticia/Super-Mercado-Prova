@@ -1,10 +1,9 @@
 import java.util.Scanner;
 
 public class Menu {
-    private Estoque estoque = new Estoque();
-    private Pedido pedido = new Pedido();
+    private final Estoque estoque = new Estoque();
+    private final Pedido pedido = new Pedido();
     private int opcaoMenuPrincipal;
-    private int opcaoEstoque;
     Scanner scannerParaNumero = new Scanner(System.in);
     Scanner scannerParaNome = new Scanner(System.in);
 
@@ -20,30 +19,51 @@ public class Menu {
     }
 
     public void switchCase() {
-        System.out.println("Digite 1 para gerenciar pedidos.\n" +
-                           "Digite 2 para gerenciar o estoque.\n" +
-                           "Digite 0 para sair.");
+        System.out.println("""
+                Digite 1 para gerenciar pedidos.
+                Digite 2 para gerenciar o estoque.
+                Digite 0 para sair.""");
         opcaoMenuPrincipal = scannerParaNumero.nextInt();
         if (opcaoMenuPrincipal == 1) {
             int opcaoPedidos;
             do {
-                System.out.println("Digite 1 para adicionar item ao carrinho.\n" +
-                                   "Digite 2 para ver o carrinho completo.\n" +
-                                   "Digite 3 para realizar o pagamento.\n" +
-                                   "Digite 4 para retirar todos os itens do carrinho.\n" +
-                                   "Digite -1 para voltar ao menu anterior.");
+                System.out.println("""
+                        Digite 1 para adicionar item ao carrinho.
+                        Digite 2 para ver o carrinho completo.
+                        Digite 3 para realizar o pagamento.
+                        Digite 4 para retirar todos os itens do carrinho.
+                        Digite -1 para voltar ao menu anterior.""");
                 opcaoPedidos = scannerParaNumero.nextInt();
                 switch (opcaoPedidos) {
                     case 1:
-                        pedido.adicionaItem();
+                        System.out.println("(1) Adicionar item por nome. \n(2) Adicionar item por id.");
+                        int opcaoCadastro = scannerParaNumero.nextInt();
+                        switch (opcaoCadastro){
+                            case 1: {
+                                var nomeProdutoParaProcuar = pedido.recebeNomeDoTeclado();
+                                var produtoEncontrado = estoque.encontraProdutoPorNome(nomeProdutoParaProcuar);
+                                pedido.adicionaItem(produtoEncontrado);
+                                break;
+                            }
+                            case 2: {
+                                System.out.println("Digite o id do produto: ");
+                                var idProdutoParaProcurar = pedido.recebeQuantidadeDoTeclado();
+                                var produtoEncontrado = estoque.encontraProdutoPorId(idProdutoParaProcurar);
+                                pedido.adicionaItem(produtoEncontrado);
+                                break;
+                            }
+                            default:
+                                System.out.println("Opção inválida.");
+                                break;
+                        }
                         break;
                     case 2:
                         pedido.imprimePedido();
                         break;
                     case 3:
-                            System.out.println("Digite o valor a ser entregue para pagar: ");
+                            System.out.println("Digite o valor a ser entregue para realizar o pagamento: ");
                             double recebeValorDoCliente = scannerParaNumero.nextDouble();
-                            if (pedido.verificarSePodeRealizarPagamento(recebeValorDoCliente)){
+                            if (pedido.verificarSePodeRealizarPagamento()){
                                 double troco = pedido.realizarTransacao(recebeValorDoCliente);
                                 if (troco > 0) {
                                     System.out.println("Pagamento realizado com sucesso! Troco: " + troco);
@@ -65,41 +85,38 @@ public class Menu {
             } while (opcaoPedidos != -1);
 
         } else if (opcaoMenuPrincipal  == 2) {
+            int opcaoEstoque;
             do {
-                System.out.println("Digite 1 para cadastrar um produto novo.\n" +
-                                   "Digite 2 para ver o catálogo completo do estoque.\n" +
-                                   "Digite -1 para voltar ao menu anterior.");
+                System.out.println("""
+                        Digite 1 para cadastrar um produto novo.
+                        Digite 2 para ver o catálogo completo do estoque.
+                        Digite 3 para dar baixa em produto (por id).
+                        Digite -1 para voltar ao menu anterior.""");
                 opcaoEstoque = scannerParaNumero.nextInt();
                 switch (opcaoEstoque) {
                     case 1:
-                        System.out.println("Digite o id do produto: ");
-                        int idProduto = scannerParaNumero.nextInt();
-                        System.out.println("Digite o nome do produto: ");
-                        String nomeProduto = scannerParaNome.nextLine();
-                        System.out.println("Digite o preço do produto: ");
-                        double precoProduto = scannerParaNumero.nextDouble();
-                        System.out.println("Digite a quantidade de produto no estoque: ");
-                        int qtdEmEstoqueProduto = scannerParaNumero.nextInt();
-                        Produto produto = new Produto(idProduto, nomeProduto, precoProduto, qtdEmEstoqueProduto);
-                        //eu colocaria o texto dentro do metodo, mas achei q deveria usar o retorno boolean pra algo
-                        if (!estoque.cadastraProduto(produto)) {
-                            System.out.println("Não foi possível cadastrar produto. Já existe um produto com este id.");
-                        } else {
-                            estoque.cadastraProduto(produto);
-                        }
+                        Produto produto = criaProduto();
+                        estoque.cadastraProduto(produto);
                         break;
                     case 2:
                         mostraEstoque();
-                        break;
-                    case 3:
-
-                        break;
-                    case 4:
                         break;
                 }
             } while (opcaoEstoque != -1);
         } else {
             System.out.println("Tchau! Volte sempre :)");
         }
+    }
+
+    public Produto criaProduto(){
+        System.out.println("Digite o id do produto: ");
+        int idProduto = scannerParaNumero.nextInt();
+        System.out.println("Digite o nome do produto: ");
+        String nomeProduto = scannerParaNome.nextLine();
+        System.out.println("Digite o preço do produto: ");
+        double precoProduto = scannerParaNumero.nextDouble();
+        System.out.println("Digite a quantidade de produto no estoque: ");
+        int qtdEmEstoqueProduto = scannerParaNumero.nextInt();
+        return new Produto(idProduto, nomeProduto, precoProduto, qtdEmEstoqueProduto);
     }
 }
