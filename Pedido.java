@@ -18,15 +18,10 @@ public class Pedido {
 
     public boolean verificarSePodeRealizarPagamento(double recebeValorDoCliente){
         if (listaDeItems.isEmpty()) {
-            System.out.println("Não foi possível realizar o pagamento. Carrinho vazio.");
+            return false;
         } else {
-            if (recebeValorDoCliente >= valorTotalDoPedido) {
-                return true;
-            } else {
-                System.out.println("Não foi possível efetuar o pagamento. Dinheiro insuficiente.");
-            }
+            return true;
         }
-        return false;
     }
 
     public double realizarTransacao(double recebeValorDoCliente) {
@@ -41,16 +36,15 @@ public class Pedido {
     public void calcularMenorQuantidadeDeNotas(double troco) {
         int trocoInt = (int) Math.floor(troco);
         double moedas = troco - trocoInt;
-
+        double restoEmMoedas = troco - trocoInt;
         int[] notasEmReais = {50, 20, 10, 5, 2};
-
-        System.out.println("Método que recebe o valor do troco e calcula a menor quantidade de notas: ");
         for (int nota : notasEmReais){
             int totalMenorQtdDeNotas = trocoInt / nota;
             trocoInt = trocoInt % nota;
-            System.out.print(totalMenorQtdDeNotas+" nota(s) de "+nota+" ");
+            System.out.print(totalMenorQtdDeNotas+" nota(s) de "+nota+", ");
         }
-        System.out.println("\n");
+        System.out.println("respondendo a letra c) Desenvolver um método onde recebe o valor do troco e \n" +
+                "calcule a menor quantidade de notas.\n");
     }
 
     public boolean adicionaItemNaLista (Produto produto, int quantidade) {
@@ -60,7 +54,6 @@ public class Pedido {
             estoque.darBaixaEmEstoquePorNome(produto.getNome(), quantidade);
             return true;
         } else {
-            System.out.println("Não foi possível adicionar. Produto fora de estoque.");
             return false;
         }
     }
@@ -75,6 +68,7 @@ public class Pedido {
                         "\nValor da unidade: "+ produto.getPreco());
             }
         }
+        imprimeValorTotal();
     }
 
     public void imprimeValorTotal() {
@@ -88,8 +82,11 @@ public class Pedido {
         var produtoEncontrado = estoque.encontraProdutoPorNome(nomeProdutoParaProcuar);
             if (produtoEncontrado != null){
             adicionaItemNaLista(produtoEncontrado, qtdDeProdutoParaAdicionar);
+                if (!adicionaItemNaLista(produtoEncontrado, qtdDeProdutoParaAdicionar)) {
+                    System.out.println("Não foi possível adicionar. Produto fora de estoque.");
+                }
             } else {
-            System.out.println("Produto não encontrado.");
+                System.out.println("Produto não encontrado.");
             }
     }
 
