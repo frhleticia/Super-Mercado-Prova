@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 public class Estoque {
-    private Produto produto;
     private int id = 1;
     private final ArrayList<Produto> listaDeProdutos = new ArrayList<>();
 
@@ -30,6 +29,7 @@ public class Estoque {
     public boolean cadastraProduto(Produto produto) {
         for (Produto verificaId : listaDeProdutos){
             if (verificaId.getId() == produto.getId()){
+                System.out.println("Não foi possível cadastrar produto. Já existe um produto com este id.");
                 return false;
             }
         }
