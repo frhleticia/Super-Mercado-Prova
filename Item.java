@@ -1,6 +1,6 @@
 public class Item {
-    private Produto produto;
-    private int quantidade;
+    private final Produto produto;
+    private final int quantidade;
     private double valorDoItem;
 
     public Item(Produto produto, int quantidade){
@@ -16,23 +16,11 @@ public class Item {
         return produto;
     }
 
-    public void setProduto(Produto produto) {
-        this.produto = produto;
-    }
-
     public int getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
-    }
-
     public double getValorDoItem() {
         return valorDoItem;
-    }
-
-    public void setValorDoItem(double valorDoItem) {
-        this.valorDoItem = valorDoItem;
     }
 }
