@@ -8,7 +8,6 @@ public class Pedido {
     private Estoque estoque;
 
     public void calculaValorTotal(){
-        valorTotalDoPedido = 0;
         for (Item item : listaDeItems) {
             item.defineValorTotal();
             valorTotalDoPedido += item.getValorDoItem();
@@ -16,17 +15,31 @@ public class Pedido {
         this.setValorTotalDoPedido(valorTotalDoPedido);
     }
 
-    public boolean verificarSePodeRealizarPagamento(){
-        return !listaDeItems.isEmpty();
+    public boolean verificarSeCarrinhoEstaVazio(){
+        return listaDeItems.isEmpty();
     }
 
     public double realizarTransacao(double recebeValorDoCliente) {
-            calculaValorTotal();
-            if (recebeValorDoCliente < valorTotalDoPedido) {
-                return -1;
+        calculaValorTotal();
+        if (recebeValorDoCliente < valorTotalDoPedido) {
+            System.out.println("Não foi possível efetuar o pagamento. Dinheiro insuficiente.");
+            return -1;
+        } else {
+            return recebeValorDoCliente - valorTotalDoPedido;
+        }
+    }
+    public void realizarPagamento(double troco){
+        if (!verificarSeCarrinhoEstaVazio()){
+            if (troco > 0) {
+                System.out.println("Pagamento realizado com sucesso! Troco: " + troco);
+                calcularMenorQuantidadeDeNotas(troco);
             } else {
-                return recebeValorDoCliente - valorTotalDoPedido;
+                System.out.println("Pagamento realizado com sucesso! Não restou troco.");
             }
+            limparCarrinho();
+        } else {
+            System.out.println("Não foi possível realizar o pagamento. Carrinho vazio.");
+        }
     }
 
     public void calcularMenorQuantidadeDeNotas(double troco) {
@@ -94,20 +107,12 @@ public class Pedido {
         listaDeItems.clear();
     }
 
-    public ArrayList<Item> getListaDeItems() {
-        return listaDeItems;
-    }
-
     public double getValorTotalDoPedido() {
         return valorTotalDoPedido;
     }
 
     public void setValorTotalDoPedido(double valorTotalDoPedido) {
         this.valorTotalDoPedido = valorTotalDoPedido;
-    }
-
-    public Estoque getEstoque() {
-        return estoque;
     }
 
     public void setEstoque(Estoque estoque) {
