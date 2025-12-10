@@ -2,13 +2,11 @@ import java.util.Scanner;
 
 public class Menu {
     private Estoque estoque = new Estoque();
-    private Item item;
     private Pedido pedido = new Pedido();
     private int opcaoMenuPrincipal;
     private int opcaoEstoque;
     Scanner scannerParaNumero = new Scanner(System.in);
     Scanner scannerParaNome = new Scanner(System.in);
-
 
     public void controlaMenu() {
         pedido.setEstoque(estoque);
@@ -41,10 +39,9 @@ public class Menu {
                         break;
                     case 2:
                         pedido.imprimePedido();
-                        pedido.imprimeValorTotal();
                         break;
                     case 3:
-                            System.out.println("Digite o valor a ser entregue: ");
+                            System.out.println("Digite o valor a ser entregue para pagar: ");
                             double recebeValorDoCliente = scannerParaNumero.nextDouble();
                             if (pedido.verificarSePodeRealizarPagamento(recebeValorDoCliente)){
                                 double troco = pedido.realizarTransacao(recebeValorDoCliente);
@@ -55,6 +52,10 @@ public class Menu {
                                     System.out.println("Pagamento realizado com sucesso! Não restou troco.");
                                 }
                                 pedido.limparCarrinho();
+                            } else if (pedido.realizarTransacao(recebeValorDoCliente) == -1){
+                                System.out.println("Não foi possível efetuar o pagamento. Dinheiro insuficiente.");
+                            } else {
+                                System.out.println("Não foi possível realizar o pagamento. Carrinho vazio.");
                             }
                         break;
                     case 4:
@@ -80,7 +81,12 @@ public class Menu {
                         System.out.println("Digite a quantidade de produto no estoque: ");
                         int qtdEmEstoqueProduto = scannerParaNumero.nextInt();
                         Produto produto = new Produto(idProduto, nomeProduto, precoProduto, qtdEmEstoqueProduto);
-                        estoque.cadastraProduto(produto);
+                        //eu colocaria o texto dentro do metodo, mas achei q deveria usar o retorno boolean pra algo
+                        if (!estoque.cadastraProduto(produto)) {
+                            System.out.println("Não foi possível cadastrar produto. Já existe um produto com este id.");
+                        } else {
+                            estoque.cadastraProduto(produto);
+                        }
                         break;
                     case 2:
                         mostraEstoque();
@@ -93,7 +99,7 @@ public class Menu {
                 }
             } while (opcaoEstoque != -1);
         } else {
-            System.out.println("Opção inválida. Tente novamente.");
+            System.out.println("Tchau! Volte sempre :)");
         }
     }
 }
